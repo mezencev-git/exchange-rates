@@ -13,6 +13,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Exchange Rates"
+
 include ':app'
 include ':domain'
 include ':data'
