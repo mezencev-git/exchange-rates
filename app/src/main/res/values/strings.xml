@@ -5,6 +5,7 @@
     <string name="remove_currency_fom_favorite">Remove currency %s - %s from favorite</string>
     <string name="choose_base_currency">Choose base currency…</string>
     <string name="show_only_favorite">Show only favorite</string>
+    <string name="error_try_again_btn_text">Error, try again</string>
 
     <!-- Filter dialog -->
     <string name="filter_dialog_title">Filtering</string>

@@ -41,4 +41,28 @@ internal class ExchangeRatesRepositoryImpl(
             )
         )
     }
+
+    override suspend fun getCurrenciesWithRates(
+        baseCurrency: Currency
+    ): List<Currency> {
+        val response = api.getExchangeRates(
+            currencyCode = baseCurrency.code,
+            currencies = database.currenciesDao().getCurrencies().map { it.code }
+        )
+
+        val currencies = database.currenciesDao().getCurrencies()
+
+        if (!response.rates.isNullOrEmpty()) {
+            return currencies.map {
+                Currency(
+                    code = it.code,
+                    name = it.name,
+                    rate = response.rates[it.code],
+                    isFavorite = it.isFavorite
+                )
+            }.filter {
+                it.rate != null
+            }
+        } else throw Exception("Rates map is empty")
+    }
 }

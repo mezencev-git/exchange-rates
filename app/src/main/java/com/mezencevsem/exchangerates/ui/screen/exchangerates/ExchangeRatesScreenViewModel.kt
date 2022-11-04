@@ -28,15 +28,7 @@ internal class ExchangeRatesScreenViewModel
         MutableStateFlow(null)
 
     init {
-        viewModelScope.launch {
-            val currencies = interactor.getAllCurrencies()
-
-            _state.value = ExchangeRatesScreenState.Content(
-                baseCurrency = null,
-                currencies = currencies,
-                filterState = ExchangeRatesFilter.AlphabeticalAsc
-            )
-        }
+        loadData()
     }
 
     fun onEvent(event: ExchangeRatesScreenEvent) {
@@ -51,6 +43,21 @@ internal class ExchangeRatesScreenViewModel
                 _dialogState.value = ExchangeRatesScreenDialogState.Filter
             is ExchangeRatesScreenEvent.FilterStateChanged ->
                 handleFilterStateChanged(event.value)
+            ExchangeRatesScreenEvent.Reload -> loadData()
+        }
+    }
+
+    private fun loadData() = viewModelScope.launch {
+        _state.value = try {
+            val currencies = interactor.getAllCurrencies()
+
+            ExchangeRatesScreenState.Content(
+                baseCurrency = null,
+                currencies = currencies,
+                filterState = ExchangeRatesFilter.AlphabeticalAsc
+            )
+        } catch (e: Exception) {
+            ExchangeRatesScreenState.Error
         }
     }
 
@@ -60,12 +67,18 @@ internal class ExchangeRatesScreenViewModel
 
         if (currentState.baseCurrency == currency) return@launch
 
-        //TODO request
+        _state.value = try {
+            _state.value = ExchangeRatesScreenState.Loading
 
-        _state.value = currentState.copy(
-            baseCurrency = currency,
-            currencies = currentState.currencies
-        )
+            val currenciesWithRates = interactor.getCurrenciesWithRates(currency)
+
+            currentState.copy(
+                baseCurrency = currency,
+                currencies = currenciesWithRates
+            )
+        } catch (e: Exception) {
+            ExchangeRatesScreenState.Error
+        }
     }
 
     private fun handleCurrencyFavoriteClicked(currency: Currency) = viewModelScope.launch {

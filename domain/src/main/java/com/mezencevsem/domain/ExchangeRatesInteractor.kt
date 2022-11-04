@@ -11,4 +11,12 @@ interface ExchangeRatesInteractor {
     suspend fun getAllCurrencies(): List<Currency>
 
     suspend fun changeFavoriteCurrency(currency: Currency)
+
+    /**
+     * Returns currencies rates relative to [baseCurrency]
+     */
+    @Throws(Exception::class)
+    suspend fun getCurrenciesWithRates(
+        baseCurrency: Currency
+    ): List<Currency>
 }

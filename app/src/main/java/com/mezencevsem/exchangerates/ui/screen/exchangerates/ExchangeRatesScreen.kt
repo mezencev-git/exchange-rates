@@ -3,6 +3,7 @@ package com.mezencevsem.exchangerates.ui.screen.exchangerates
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -55,7 +58,19 @@ internal fun ExchangeRatesScreen(
     val dialogState = viewModel.dialogState.collectAsState().value
 
     when (state) {
-        ExchangeRatesScreenState.Loading -> Unit
+        ExchangeRatesScreenState.Loading -> {
+            Box(
+                modifier = modifier
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(50.dp),
+                    color = MaterialTheme.colors.onBackground,
+                    strokeWidth = 5.dp
+                )
+            }
+        }
         is ExchangeRatesScreenState.Content -> {
             ExchangeRatesScreen(
                 modifier = modifier,
@@ -87,7 +102,19 @@ internal fun ExchangeRatesScreen(
                 else -> Unit
             }
         }
-        ExchangeRatesScreenState.Error -> Unit
+        ExchangeRatesScreenState.Error -> {
+            Box(
+                modifier = modifier
+            ) {
+                Button(
+                    onClick = {
+                        viewModel.onEvent(ExchangeRatesScreenEvent.Reload)
+                    }
+                ) {
+                    Text(text = stringResource(R.string.error_try_again_btn_text))
+                }
+            }
+        }
     }
 }
 
@@ -156,7 +183,7 @@ private fun ExchangeRatesScreen(
                     } else true
                 }
                 .filter {
-                    it != content.baseCurrency
+                    it.code != content.baseCurrency?.code
                 }
         ) { index, currency ->
             CurrencyItem(

@@ -14,4 +14,10 @@ class ExchangeRatesInteractorImpl(
     override suspend fun changeFavoriteCurrency(currency: Currency) {
         repository.changeFavoriteCurrency(currency)
     }
+
+    override suspend fun getCurrenciesWithRates(
+        baseCurrency: Currency
+    ): List<Currency> {
+        return repository.getCurrenciesWithRates(baseCurrency)
+    }
 }

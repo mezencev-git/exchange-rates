@@ -19,4 +19,6 @@ internal sealed class ExchangeRatesScreenEvent {
     class FilterStateChanged(
         val value: ExchangeRatesFilter
     ) : ExchangeRatesScreenEvent()
+
+    object Reload : ExchangeRatesScreenEvent()
 }

@@ -26,7 +26,7 @@ internal class ExchangeRatesApiImpl(
         currencies: List<String>
     ): ExchangeRatesResponse {
         return client.get("$BASE_ENDPOINT/latest") {
-            header(API_KEY_HEADER_KEY, API_KEY_HEADER_KEY)
+            header(API_KEY_HEADER_KEY, API_KEY_VALUE)
             parameter("base", currencyCode)
             parameter("symbols", currencies)
         }
