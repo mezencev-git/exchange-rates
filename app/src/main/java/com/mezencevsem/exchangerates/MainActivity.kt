@@ -9,7 +9,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import com.mezencevsem.exchangerates.ui.screen.exchangerates.ExchangeRatesScreen
 import com.mezencevsem.exchangerates.ui.theme.ExchangeRatesTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

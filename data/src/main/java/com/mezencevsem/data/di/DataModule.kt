@@ -2,12 +2,14 @@ package com.mezencevsem.data.di
 
 import android.content.Context
 import androidx.room.Room
+import com.mezencevsem.data.ExchangeRatesInteractorImpl
 import com.mezencevsem.data.ExchangeRatesRepository
 import com.mezencevsem.data.ExchangeRatesRepositoryImpl
 import com.mezencevsem.data.local.CurrenciesDatabase
 import com.mezencevsem.data.remote.ExchangeRatesApi
 import com.mezencevsem.data.remote.ExchangeRatesApiImpl
 import com.mezencevsem.data.remote.ktorHttpClient
+import com.mezencevsem.domain.ExchangeRatesInteractor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +46,13 @@ object DataModule {
     ): ExchangeRatesRepository = ExchangeRatesRepositoryImpl(
         database = database,
         api = api
+    )
+
+    @Singleton
+    @Provides
+    internal fun provideExchangeRatesInteractor(
+        repository: ExchangeRatesRepository
+    ): ExchangeRatesInteractor = ExchangeRatesInteractorImpl(
+        repository = repository
     )
 }

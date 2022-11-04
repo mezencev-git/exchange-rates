@@ -2,6 +2,7 @@ package com.mezencevsem.exchangerates.ui.screen.exchangerates
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mezencevsem.domain.ExchangeRatesInteractor
 import com.mezencevsem.domain.model.Currency
 import com.mezencevsem.exchangerates.ui.screen.exchangerates.model.ExchangeRatesFilter
 import com.mezencevsem.exchangerates.ui.screen.exchangerates.model.ExchangeRatesScreenDialogState
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ExchangeRatesScreenViewModel
 @Inject constructor(
-//    private val interactor: ExchangeRatesInteractor
+    private val interactor: ExchangeRatesInteractor
 ) : ViewModel() {
 
     val state by lazy { _state }
@@ -27,42 +28,15 @@ internal class ExchangeRatesScreenViewModel
         MutableStateFlow(null)
 
     init {
-        _state.value = ExchangeRatesScreenState.Content(
-            baseCurrency = null,
-            currencies = listOf(
-                Currency(
-                    code = "AAA",
-                    name = "Afghan",
-                    rate = 0.1f,
-                    isFavorite = false
-                ),
-                Currency(
-                    code = "BBB",
-                    name = "Afghan Afghani",
-                    rate = 0.2f,
-                    isFavorite = true
-                ),
-                Currency(
-                    code = "CCC",
-                    name = "Afghan Afghani Afghan",
-                    rate = 0.3f,
-                    isFavorite = false
-                ),
-                Currency(
-                    code = "DDD",
-                    name = "Afghan Afghani Afghan Afghani",
-                    rate = 0.4f,
-                    isFavorite = true
-                ),
-                Currency(
-                    code = "EEE",
-                    name = "Afghan Afghani Afghan Afghani Afghan",
-                    rate = 5f,
-                    isFavorite = false
-                )
-            ),
-            filterState = ExchangeRatesFilter.AlphabeticalAsc
-        )
+        viewModelScope.launch {
+            val currencies = interactor.getAllCurrencies()
+
+            _state.value = ExchangeRatesScreenState.Content(
+                baseCurrency = null,
+                currencies = currencies,
+                filterState = ExchangeRatesFilter.AlphabeticalAsc
+            )
+        }
     }
 
     fun onEvent(event: ExchangeRatesScreenEvent) {
@@ -98,7 +72,7 @@ internal class ExchangeRatesScreenViewModel
         val currentState = _state.value
         if (currentState !is ExchangeRatesScreenState.Content) return@launch
 
-        //TODO db insert
+        interactor.changeFavoriteCurrency(currency)
 
         _state.value = currentState.copy(
             baseCurrency = if (currentState.baseCurrency == currency) {
